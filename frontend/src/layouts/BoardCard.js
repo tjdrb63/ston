@@ -1,22 +1,39 @@
-import React from 'react';
+import React, { Component } from 'react';
 import BoardModal from './BoardModal';
+import { Avatar, Button } from '@mui/material';
+import BoardSide from './BoardSide';
 
-function BoardCard(props){
-    return (
-        <div className ="w-full">
+class BoardCard extends Component{
+    state={
+    }
+    BoardToSideData = (e) =>{
+        // e.preventDefault();
+        console.log(this.props);
+        this.props.onCreate({
+            name:this.props.name,
+            text:this.props.text,
+            board_id:this.props.board_id
+        });
+    }
+
+    render(){
+        return (  
+            <div className ="w-full px-2">
                 <div>
-                    <div className="bg-white w-full rounded-md shadow-md h-auto pl-8 mt-6">
+                    <div className="bg-white w-full rounded-md shadow-md h-auto pl-8 mt-2">
                         <div className="w-full h-16 flex items-center flex justify-between ">
                             <div className="flex">
-                                <img className=" rounded-full w-10 h-10 mr-3" src="https://scontent.fsub1-1.fna.fbcdn.net/v/t1.0-9/37921553_1447009505400641_8037753745087397888_n.jpg?_nc_cat=102&_nc_sid=09cbfe&_nc_oc=AQnDTnRBxV3QgnhKOtk9AiziIOXw0K68iIUQfdK_rlUSFgs8fkvnQ6FjP6UBEkA6Zd8&_nc_ht=scontent.fsub1-1.fna&oh=728962e2c233fec37154419ef79c3998&oe=5EFA545A" alt=""></img>
+                                {/* <img className=" rounded-full w-10 h-10 mr-3" src="https://scontent.fsub1-1.fna.fbcdn.net/v/t1.0-9/37921553_1447009505400641_8037753745087397888_n.jpg?_nc_cat=102&_nc_sid=09cbfe&_nc_oc=AQnDTnRBxV3QgnhKOtk9AiziIOXw0K68iIUQfdK_rlUSFgs8fkvnQ6FjP6UBEkA6Zd8&_nc_ht=scontent.fsub1-1.fna&oh=728962e2c233fec37154419ef79c3998&oe=5EFA545A" alt=""></img> */}
+                                <Avatar className='mr-3'>d</Avatar> 
                                 <div>
-                                    <h3 className="text-md font-semibold ">{props.name}</h3>
+                                    <h3 className="text-md font-semibold ">{this.props.name}</h3>
                                     <p className="text-xs text-gray-500">시간표시할것</p>
                                 </div>
                             </div>
                         </div>
                         <div>
-                            {props.text}
+                            {this.props.text}
+                            {this.state.content}
                         </div>
                         {/* <!-- 하트 이미지 및 댓글 갯수 --> */}
                         <div className="w-full h-8 flex items-center px-3 my-3">
@@ -28,16 +45,17 @@ function BoardCard(props){
                             </div>
                             <div className="w-full flex justify-between">
                                 <p className="ml-3 text-gray-500">8</p>
-                                <BoardModal title="더보기 . ." name={props.name} text={props.text}/>
-                        
+                                <Button onClick={this.BoardToSideData}>Go to SideBar</Button>
+                                <BoardModal  title="더보기 . ." name={this.state.name} text={this.state.text}/>
                             </div>
                         </div>
-                    <div className="grid grid-cols-3 w-full px-5 px-5 my-3">
+                        <div className="grid grid-cols-3 w-full px-5 px-5 my-3">
                         </div>
                     </div>
                 </div>
             </div>
-    );
+        );
+    }
 }
 
 export default BoardCard;

@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 function BoardModal(props){
     const click = () =>{
         Swal.fire({
-                html:` <div class="w-full h-screen flex bg-black">
+                html:` <div class="w-full h-mscreen flex bg-black">
                 <!-- 왼쪽 레이아웃 -->
                 <div class="w-128 m-auto ">
                 </div>
@@ -49,7 +49,9 @@ function BoardModal(props){
                     </div>
                 </div>
             </div>`,
-            width:1000,
+            width:700,
+            position: 'center-start',
+           
             showConfirmButton: false,
           })
           

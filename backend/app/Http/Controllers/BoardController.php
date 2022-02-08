@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\FreeBoard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,5 +26,14 @@ class BoardController extends Controller
         }
 
         return $boards;
+    }
+    public function ShowComment($board_id){
+            $comments = DB::table("comments")->where("freeboard_id","=",$board_id)->get();
+            $len= count($comments);
+            for($i=0;$i<$len;$i++){
+                $userName= DB::table('users')->where("id","=",$comments[$i]->user_id)->value("name");
+                $comments[$i] -> user_name = $userName;
+            }
+            return $comments;
     }
 }
