@@ -1,4 +1,4 @@
-import React,{Component, useState} from 'react';
+import React,{Component, useRef, useState} from 'react';
 import Swal from 'sweetalert2'
 import axios from 'axios';
 import BoardCard from '../layouts/BoardCard';
@@ -18,14 +18,15 @@ class Board extends Component{
     ComeSideData =(data)=>{
         this.setState({sideName:data.name});
         this.setState({sideText:data.text}); 
-        this.setState({sideBoardId:data.board_id}); 
+        this.setState({sideBoardId:data.board_id});
     }
-    render(){  
-        return(
+        
+    render(){ 
+        return(  
             <div className='w-full m-auto flex'>
                 {/* left Side */}
                 <div className='w-1/4 bg-red-200'>
-                    <Button variant='contained' onClick={this.BoardShow}>awdawd</Button>
+                    SideBar
                 </div>
                 {/* main */}
                 <div className='w-full bg-gray-200'>
@@ -38,8 +39,6 @@ class Board extends Component{
                     })}
                 </div>
                 {/* right Side */}
-                <div className='w-100 bg-yellow-200'>
-                </div>
                 <BoardSide text={this.state.sideText} board_id={this.state.sideBoardId} name={this.state.sideName}/>
             </div>
         )

@@ -36,4 +36,13 @@ class BoardController extends Controller
             }
             return $comments;
     }
+    public function PostComment(Request $request){
+        $comments = new Comment();
+        $comments -> freeboard_id = $request->board_id;
+        $comments -> comment = $request->content;
+        $comments -> user_id = 6;
+
+        $comments -> save();
+
+    }
 }

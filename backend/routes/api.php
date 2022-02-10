@@ -25,3 +25,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/test',[BoardController::class,"Test"]);
 Route::post('/board/show',[BoardController::class,"BoardShow"]);
 Route::post('/show/comment/{board_id}',[BoardController::class,"ShowComment"]);
+Route::post('/post/comment',[BoardController::class,"PostComment"]);
