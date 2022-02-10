@@ -5,7 +5,8 @@ import BoardCard from '../layouts/BoardCard';
 import Button from '@mui/material/Button'
 import BoardWriteModal from '../layouts/BoardWriteModal';
 import BoardSide from '../layouts/BoardSide';
-import { Timer } from '@mui/icons-material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
 
 
 class Board extends Component{
@@ -14,6 +15,18 @@ class Board extends Component{
         content_text:[],
         board_id:[],
 
+    }
+    fetchData =()=>{
+        axios.post('/api/board/show')
+        .then(res=>{
+            console.log("생성호출")
+            console.log(res.data)
+            for(let i = 0 ; i<res.data.length;i++){
+                this.setState({user_name:this.state.user_name.concat(res.data[i].user_name)})
+                this.setState({board_id:this.state.board_id.concat(res.data[i].id)})
+                this.setState({content_text:this.state.content_text.concat(res.data[i].content_text)})
+            }
+        })
     }
     ComeSideData =(data)=>{
         this.setState({sideName:data.name});
@@ -29,48 +42,42 @@ class Board extends Component{
                     SideBar
                 </div>
                 {/* main */}
-                <div className='w-full bg-gray-200'>
-                    {this.state.user_name.map((data,idx) =>{
-                        return(
-                            <div>
+                <div className='w-full bg-gray-200 relative'>
+                    <BoardWriteModal></BoardWriteModal>
+                    <InfiniteScroll
+                        dataLength={this.state.content_text.length} //This is important field to render the next data
+                        next={this.fetchData}
+                        hasMore={true}
+                        loader={<h4>Loading...</h4>}
+                        endMessage={
+                        <p style={{ textAlign: 'center' }}>
+                            <b>Yay! You have seen it all</b>
+                        </p>
+                        }
+                    >
+                        {this.state.user_name.map((data,idx) =>{
+                            return(   
                                 <BoardCard onCreate={this.ComeSideData} name={data} board_id={this.state.board_id[idx]} text={this.state.content_text[idx]}/>
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </InfiniteScroll>
                 </div>
                 {/* right Side */}
                 <BoardSide text={this.state.sideText} board_id={this.state.sideBoardId} name={this.state.sideName}/>
+                
+                    
             </div>
         )
     }
     componentDidMount(){
         axios.post('/api/board/show')
         .then(res=>{
-            console.log(res.data)
             for(let i = 0 ; i<res.data.length;i++){
                 this.setState({user_name:this.state.user_name.concat(res.data[i].user_name)})
                 this.setState({board_id:this.state.board_id.concat(res.data[i].id)})
                 this.setState({content_text:this.state.content_text.concat(res.data[i].content_text)})
             }
         })
-        axios.post('/api/board/show')
-        .then(res=>{
-            for(let i = 0 ; i<res.data.length;i++){
-                this.setState({user_name:this.state.user_name.concat(res.data[i].user_name)})
-                this.setState({board_id:this.state.board_id.concat(res.data[i].id)})
-                this.setState({content_text:this.state.content_text.concat(res.data[i].content_text)})
-            }
-        })
-        axios.post('/api/board/show')
-        .then(res=>{
-            for(let i = 0 ; i<res.data.length;i++){
-                this.setState({user_name:this.state.user_name.concat(res.data[i].user_name)})
-                this.setState({board_id:this.state.board_id.concat(res.data[i].id)})
-                this.setState({content_text:this.state.content_text.concat(res.data[i].content_text)})
-            }
-        })
-        
-    
     }
   
 }
