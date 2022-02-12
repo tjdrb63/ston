@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Board from './components/Board';
 import axios from 'axios';
+import BoardCopy from './components/BoardCopy';
 
 axios.defaults.baseURL = "http://localhost:8000/"
 axios.defaults.headers.post["Content-Type"] = 'application/json'
@@ -18,7 +19,7 @@ function App() {
           <Route path="/" element={<MasterLayout />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
-          <Route path="/board" element={<Board/>}></Route>
+          <Route path="/board" element={<BoardCopy/>}></Route>
           </Routes>
         </Router>
     </div>

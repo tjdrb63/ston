@@ -6,10 +6,12 @@ import Button from '@mui/material/Button'
 import BoardWriteModal from '../layouts/BoardWriteModal';
 import BoardSide from '../layouts/BoardSide';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch } from 'react-redux';
 
 
 
 class Board extends Component{
+
     state={
         user_name:[],
         content_text:[],
@@ -70,6 +72,7 @@ class Board extends Component{
         )
     }
     componentDidMount(){
+
         axios.post('/api/board/show')
         .then(res=>{
             for(let i = 0 ; i<res.data.length;i++){
