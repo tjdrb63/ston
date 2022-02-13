@@ -26,9 +26,9 @@ class BoardController extends Controller
         }
 
         return $boards;
-    }
+}   
     public function ShowComment($board_id){
-            $comments = DB::    table("comments")->where("freeboard_id","=",$board_id)->paginate(5);
+            $comments = DB::table("comments")->where("freeboard_id","=",$board_id)->paginate(5);
             // $len= count($comments);
             // for($i=0;$i<3;$i++){
             //     $userName= DB::table('users')->where("id","=",$comments[$i]->user_id)->value("name");

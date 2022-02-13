@@ -12,7 +12,6 @@ import { useDispatch } from 'react-redux';
 function BoardCard(props){
     
     const dispatch = useDispatch();
-
     const BoardToSideData = (e) =>{
         dispatch({
             type:"BOARD_CLICK",
@@ -22,6 +21,7 @@ function BoardCard(props){
                 sideBoardId :props.board_id
             }
         })
+        dispatch({type:"SIDE_OPEN"})
         console.log(props);
     }
 
@@ -38,7 +38,7 @@ function BoardCard(props){
                                     <h3 className="text-md font-semibold pt-2">{props.name}</h3>
                                 </div>
                             </div>
-                            <svg class="w-10 mt-1.5" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#b0b0b0" stroke-width="2" stroke-linecap="square" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            <svg className="w-10 mt-1.5" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#b0b0b0" strokeWidth="2" strokeLinecap="square" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
                         </div>
                     </div>
                     <div className='w-full'>

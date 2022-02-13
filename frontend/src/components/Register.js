@@ -14,7 +14,9 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import {useNavigate} from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { Logout } from '../store/actions';
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -31,8 +33,8 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
-
-  const navigate  = useNavigate();
+  const dispatch = useDispatch();
+  const history  = useHistory();
   const [errMsg,getError] = useState({
     error_list: [],
   });
@@ -61,11 +63,13 @@ export default function SignUp() {
             if(res.data.status == 200) {
                 localStorage.setItem('auth_token',res.data.token);
                 localStorage.setItem('auth_name', res.data.username);
+                
                 Toast.fire({
                     icon: 'success',
                     title: res.data.message
                   })
-                navigate('/');
+                  dispatch(Logout());
+                  history.push('/');
             } else if(res.data.status == 401) {
                 Swal.fire("error",res.data.message,"error");
             } else {
@@ -78,41 +82,31 @@ export default function SignUp() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
+        <Grid container component="main" sx={{ height: '100vh' }}>
+    <div className=" w-full  relative flex flex-col justify-center items-center bg-blue-100 overflow-hidden">
+    <div className="md:border md:border-gray-300 bg-white md:shadow-lg shadow-none rounded p-10 rounded-2xl" >
+      
+    <Box
             sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
+                       display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
+                 <Typography
+            variant="h1"
+            noWrap
+            component="div"
+            
+          >
+               <img alt="logo" src="/img/logo.png" width="100"/>
+          </Typography>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <span className="text-black font-bold text-xl block">회원가입</span>
+              
+              
+              <Grid >
+              <Grid item xs={12} className="p-1">
                 <TextField
                   autoComplete="name"
                   name="name"
@@ -121,11 +115,14 @@ export default function SignUp() {
                   id="name"
                   label="Name"
                   autoFocus
+                  style={{
+                    backgroundColor: "#f2f4f8",
+                    width: '300px'
+                }}
                 />
-                 <span className="text-red-500">{errMsg.error_list.name}</span>
               </Grid>
-             
-              <Grid item xs={12}>
+              <span className="text-red-500">{errMsg.error_list.name}</span>
+              <Grid item xs={12} className="p-1">
                 <TextField
                   required
                   fullWidth
@@ -133,11 +130,15 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  style={{
+                    backgroundColor: "#f2f4f8",
+                    width: '300px'
+                }}
                 />
-                <span className="text-red-500">{errMsg.error_list.email}</span>
               </Grid>
-              
-              <Grid item xs={12}>
+              <span className="text-red-500">{errMsg.error_list.email}</span>
+
+              <Grid item xs={12} className="p-1">
                 <TextField
                   required
                   fullWidth
@@ -146,30 +147,35 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  style={{
+                    backgroundColor: "#f2f4f8",
+                    width: '300px'
+                }}
                 />
-                <span className="text-red-500">{errMsg.error_list.password}</span>
               </Grid>
+              <span className="text-red-500">{errMsg.error_list.password}</span>
+            </Grid>
               
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/login" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{ mt: 3, mb: 2, p:2 }}
+              >
+                    <span className="text-white font-bold text-sm">회원가입</span>
+              </Button>
+  
+            <span className="text-xs text-black block text-center ">계정이 있으신가요?  &nbsp;<Link className="text-blue-500  ml-3" to="/login">로그인</Link></span>
+            </Box>
           </Box>
-        </Box>
-        </Grid>
-      </Grid>
+          
+    </div>
+    <div className="w-64 md:w-96 h-96 md:h-full bg-blue-200 bg-opacity-30 absolute -top-64 md:-top-96 right-20 md:right-32 rounded-full pointer-events-none -rotate-45 transform"></div>
+    <div className="w-96 h-full bg-indigo-200 bg-opacity-20 absolute -bottom-96 right-64 rounded-full pointer-events-none -rotate-45 transform"></div>
+</div>
+
+</Grid>
     </ThemeProvider>
   );
 }

@@ -1,23 +1,43 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import logger from "redux-logger";
+import { composeWithDevTools } from "redux-devtools-extension";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { createStore } from 'redux';
-import axios from 'axios';
-import reducer from './reducers/BoardData';
-import { Provider } from 'react-redux';
+import { ThemeProvider , createTheme} from '@mui/material/styles'
+import {store} from './store';
 
-
-const store = createStore(reducer);
-
+const theme = createTheme({
+  palette: {
+    type: 'light',
+    primary: {
+      main: '#007aff',
+    },
+    nav: {
+      main: '#ffffff',
+    },
+    black: 'black',
+    searchBase: '#f2f4f8',
+    secondary: {
+      main: '#f50057',
+    },
+    button: {
+      main: '#000000',
+      contrastText: '#fff',
+    },
+    divider: 'rgba(0,0,0,15)',
+  },
+});
 
 ReactDOM.render(
-  <React.StrictMode>
+    <ThemeProvider theme={theme}>
     <Provider store={store}>
     <App />
     </Provider>
-  </React.StrictMode>,
+    </ThemeProvider>
+,
   document.getElementById('root')
 );
 

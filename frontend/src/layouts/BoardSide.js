@@ -1,77 +1,88 @@
-import  React, { Component , useEffect}from 'react';
+import  React, { Component , useEffect, useState}from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import BoardCard from './BoardCard';
-import { Avatar, Button, Divider, Pagination, Skeleton, TextField } from '@mui/material';
+import { Avatar, Button, Divider, IconButton, Pagination, Skeleton, TextField } from '@mui/material';
 import axios from 'axios';
 import { data } from 'autoprefixer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Provider, useSelector, useDispatch, connect} from 'react-redux';
+import { useTheme } from '@mui/styles';
+
 
 const drawerWidth = 385;
 
 function BoardSide(props){
     
-    const sideName = useSelector((state=>state.sideName));
-    const sideText = useSelector((state=>state.sideText));
-    const sideBoardId = useSelector((state=>state.sideBoardId));
-    const current_page = 1;
-    
+    const pagi = React.createRef();
+    const sideName = useSelector((state=>state.Reducers.sideName));
+    const sideText = useSelector((state=>state.Reducers.sideText));
+    const sideBoardId = useSelector((state=>state.Reducers.sideBoardId));
+    const [comment_texts,setComment_texts] = useState([]);
+    const [comment_user_names,setComment_user_names] = useState([]);
+    const [post_comment,setPostComment] = useState("");
+    const [current_page,setCurrent_page] = useState(1);
+    const [last_page,setLast_page] = useState(1);
+    // const [open,setOpen] = useState(false);
+    const isOpen = useSelector((state=>state.Reducers.isOpen))
+    const dispatch = useDispatch()
 
+    const handleDrawerClose = () => {
+        dispatch({type:"SIDE_CLOSE"})
+    };
+ 
+    // 클릭한 board_id 값바뀌면 새로운 댓글 출력
     useEffect(()=>{
-        if(sideBoardId!=null){
+        if(sideBoardId != null){
+            setCurrent_page(current_page => 1);
+            dataclean();
             ShowComment();
-           
         }
     },[sideBoardId])
-    // if(this.state.current_page !== prevState.current_page){
-    //     this.ShowComment();
-    // }
-    // }
-    // dataclean = () =>{
-    //     this.setState({
-    //         comment_text:[],
-    //         comment_user_name:[],
-    //     });
-    // }
-    // state={
-    //     comment_text:[],
-    //     comment_user_name:[],
-    //     current_page:1,
-    //     post_comment:"",
-    // }
-    // PostComment = () =>{
-    //     axios.post('/api/post/comment',{
-    //         content:this.state.post_comment,
-    //         board_id:this.props.board_id
-    //     }).then(res=>{
-    //         console.log(res.data)
-    //     })
-    // }
-    // commentHandle=(e)=>{
-    //     this.setState({
-    //         [e.target.name]:e.target.value
-    //     });
-    // }
-    // paginateHandle = (e) =>{
-    //     this.setState((state)=>{
-    //         return{ current_page:e.target.outerText }
-    //     })
-    //     // 리렌더링 이전에 데이터 바뀌는거 찾아야함
-    //     console.log(this.state.current_page);
-    //     // this.ShowComment();
-    //     // console.log(e);
-    // }
+    // current_Page값 바뀌면 댓글 불러오기
+    useEffect(()=>{
+        dataclean();
+        ShowComment();
+        console.log(current_page)
+
+    },[current_page])
+    //댓글 데이터 초기화
+    const dataclean = () =>{
+        setComment_user_names(comment_user_names => [])
+        setComment_texts(comment_texts => [])
+    }
+    const PostComment = () =>{
+        axios.post('/api/post/comment',{
+            content:post_comment,
+            board_id:sideBoardId
+        }).then(res=>{
+            console.log(res.data)
+        })
+    }
+    const commentHandle=(e)=>{
+        setPostComment(post_comment => e.target.value);
+    }
+    const paginateHandle = (e) =>{
+        console.log(e)
+        setCurrent_page(current_page => e.target.outerText);
+        // 리렌더링 이전에 데이터 바뀌는거 찾아야함
+     }
+    // 게시글 누르면 코멘트 불러오기 & 페이지네이션 버튼누르면 반응
     const ShowComment =() =>{
         axios.post("/api/show/comment/"+sideBoardId+"?page=" + current_page)
         .then(res=>{ 
+            console.log("댓글 부르기")
             console.log(res);
-            // for(let i = 0 ; i<res.data.data.length;i++){
-
-            // }
+            setLast_page(last_page => res.data.last_page)
+            for(let i = 0 ; i<res.data.data.length;i++){
+                console.log(res.data.data[i].comment)
+                setComment_user_names(comment_user_names => [...comment_user_names,res.data.data[i].user_name])
+                setComment_texts(comment_texts => [...comment_texts,res.data.data[i].comment])
+            }
         })
+        
     }
-        return (
+    return (
         <Box className="justify-between flex" sx={{ display: 'flex' }}>
             <Drawer
                 sx={{
@@ -83,9 +94,15 @@ function BoardSide(props){
                     overflowX:'hidden'
                 },
                 }}
-                variant="permanent"
+                variant="persistent"
                 anchor="right"
+                open={isOpen}
             >
+                {/* 닫기 버튼 */}
+                <IconButton onClick={handleDrawerClose}>
+                        <div>닫기</div>
+                </IconButton>
+
                 {/* 사이드바 데이터 없을경우 */}
                 {
                     sideName == null &&
@@ -100,7 +117,7 @@ function BoardSide(props){
                         </div>
                     </div>
                 }
-                {/* 사이드바 데이처 있을경우*/}
+                {/* 사이드바 데이터 있을경우*/}
                 {sideName != null &&
                 <div className='flex flex-col relative'>
                     <div className='w-full p-5'>
@@ -114,19 +131,19 @@ function BoardSide(props){
                             </div>
                         </div>
                         {/* 게시글 구간 */}
-                        
+
                         <div className=' pt-4 mb-10 break-words'>
                             {sideText}
                         </div>
                         {/* 페이지 네이션 */}
-                        {/* <div className='w-full flex justify-center bg-gray-200'>
-                            <Pagination count={this.state.last_page} color="primary" onClick={this.paginateHandle} hidePrevButton hideNextButton />
-                        </div> */}
-                        {/* 댓글 구간 */}
-                        {/* <div className='mb-24 '>
-                            {this.state.comment_user_name.map((user_name,idx)=>{
+                        <div className='w-full flex justify-center bg-gray-200'>
+                            <Pagination name="paginate" count={last_page} color="primary" onClick={paginateHandle} hidePrevButton hideNextButton />
+                        </div>
+                        {/* 댓글 구간 */}   
+                        <div className='mb-24 '>
+                            {comment_user_names.map((user_name,idx)=>{
                                 return(
-                                    <div className='mt-2 mb-4'>
+                                    <div className='mt-2 mb-4' key={user_name}>
                                         <div className="flex">
                                             <Avatar className='mr-3'>d</Avatar> 
                                             <div>
@@ -135,19 +152,20 @@ function BoardSide(props){
                                             </div>
                                         </div>
                                         <div className='break-words'>
-                                            {this.state.comment_text[idx]}
+                                            {comment_texts[idx]}
                                         </div>
                                     </div>
                                 )
                             })}
-                        </div>     */}
+                        </div>    
                     </div>
                     {/* 댓글 달기 */}
-                    {/* <div className='flex fixed w-96 bottom-0 right-0 '>
-                        <textarea name='post_comment' className='w-4/5 m-2 bg-gray-200' rows={4} onChange={this.commentHandle}
+                    {post_comment}
+                    <div className='flex fixed w-96 bottom-0 right-0 '>
+                        <textarea name='post_comment' className='w-4/5 m-2 bg-gray-200' rows={4} onChange={commentHandle}
                         ></textarea>
-                          <Button className='w-1/5' onClick={this.PostComment}>댓글달기</Button>
-                    </div> */}
+                          <Button className='w-1/5' onClick={PostComment}>댓글달기</Button>
+                    </div>
                 </div>
             }
             </Drawer>

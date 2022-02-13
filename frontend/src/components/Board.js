@@ -39,13 +39,10 @@ class Board extends Component{
     render(){ 
         return(  
             <div className='w-full m-auto flex'>
-                {/* left Side */}
-                <div className='w-1/4 bg-red-200'>
-                    SideBar
-                </div>
                 {/* main */}
                 <div className='w-full bg-gray-200 relative'>
-                    <BoardWriteModal></BoardWriteModal>
+                    <BoardSide text={this.state.sideText} board_id={this.state.sideBoardId} name={this.state.sideName}/>    
+                    {/* <BoardWriteModal></BoardWriteModal> */}
                     <InfiniteScroll
                         dataLength={this.state.content_text.length} //This is important field to render the next data
                         next={this.fetchData}
@@ -63,11 +60,7 @@ class Board extends Component{
                             )
                         })}
                     </InfiniteScroll>
-                </div>
-                {/* right Side */}
-                <BoardSide text={this.state.sideText} board_id={this.state.sideBoardId} name={this.state.sideName}/>
-                
-                    
+                </div>#A
             </div>
         )
     }

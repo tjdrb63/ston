@@ -1,44 +1,28 @@
 import React,{useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import {useNavigate} from 'react-router-dom'
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-const theme = createTheme();
-
+import {useHistory} from 'react-router-dom'
+import {useDispatch} from 'react-redux'
+import { Login } from '../store/actions';
 export default function SignInSide() {
 
-  const navigate  = useNavigate();
+  const dispatch = useDispatch();
+  const history  = useHistory();
   const [errMsg,getError] = useState({
     error_list: [],
   });
   const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: 'bottom-end',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
@@ -61,7 +45,10 @@ export default function SignInSide() {
                     icon: 'success',
                     title: res.data.message
                   })
-                navigate('/');
+                axios.get('/api/user').then(res=> {
+                  dispatch(Login(res.data))
+                })
+                history.push('/');
             } else if(res.data.status == 401) {
                 Swal.fire("error",res.data.message,"error");
             } else {
@@ -73,51 +60,49 @@ export default function SignInSide() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
+    <Grid container component="main" sx={{ height: '100vh' }}>
+    <div className=" w-full  relative flex flex-col justify-center items-center bg-blue-100 overflow-hidden">
+    <div className="md:border md:border-gray-300 bg-white md:shadow-lg shadow-none rounded p-10 rounded-2xl" >
+      
+    <Box
             sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
+                       display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
+                 <Typography
+            variant="h1"
+            noWrap
+            component="div"
+            
+          >
+               <img alt="logo" src="/img/logo.png" width="100"/>
+          </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <span className="text-black font-bold text-xl block">로그인</span>
+              
+              <Grid>
+
+        
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="이메일 주소 또는 아이디"
                 name="email"
                 autoComplete="email"
                 autoFocus
+                style={{
+                    backgroundColor: "#f2f4f8",
+                    width: '300px'
+                }}
               />
-              <span className="text-red-500">{errMsg.error_list.email}</span>
+                            <span className="text-red-500">{errMsg.error_list.email}</span>
+                    </Grid>
+              <Grid  >
+                
               <TextField
                 margin="normal"
                 required
@@ -127,37 +112,48 @@ export default function SignInSide() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-              />
+                style={{
+                  backgroundColor: "#f2f4f8",
+                  width: '300px'
+              }}/>
+              
+</Grid>
+            
               <span className='text-red-500'>{errMsg.error_list.password}</span>
-              <FormControlLabel
+              <Grid container>
+                <Grid item xs>
+                <FormControlLabel className="text-black font-bold"
                 control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+                label="자동 로그인"
               />
+                </Grid>
+                <Grid item>
+                <Link to="#" variant="body2">
+                    비밀번호 찾기
+                  </Link>
+                </Grid>
+              </Grid>
+              
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                size="large"
+                sx={{ mt: 3, mb: 2, p:2 }}
               >
-                Sign In
+                    <span className="text-white font-bold text-sm">로그인</span>
               </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="/register" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} />
+  
+            <span className="text-xs text-black block text-center ">계정이 없으신가요?<Link className="text-blue-500  ml-3" to="/register">회원가입</Link></span>
             </Box>
           </Box>
-        </Grid>
-      </Grid>
-    </ThemeProvider>
+          
+    </div>
+    <div className="w-64 md:w-96 h-96 md:h-full bg-blue-200 bg-opacity-30 absolute -top-64 md:-top-96 right-20 md:right-32 rounded-full pointer-events-none -rotate-45 transform"></div>
+    <div className="w-96 h-full bg-indigo-200 bg-opacity-20 absolute -bottom-96 right-64 rounded-full pointer-events-none -rotate-45 transform"></div>
+</div>
+
+</Grid>
+
   );
 }
