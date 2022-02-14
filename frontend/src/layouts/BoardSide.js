@@ -4,7 +4,6 @@ import Drawer from '@mui/material/Drawer';
 import BoardCard from './BoardCard';
 import { Avatar, Button, Divider, IconButton, Pagination, Skeleton, TextField } from '@mui/material';
 import axios from 'axios';
-import { data } from 'autoprefixer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Provider, useSelector, useDispatch, connect} from 'react-redux';
 import { useTheme } from '@mui/styles';
@@ -19,6 +18,7 @@ function BoardSide(props){
     const sideText = useSelector((state=>state.Reducers.sideText));
     const sideBoardId = useSelector((state=>state.Reducers.sideBoardId));
     const [comment_texts,setComment_texts] = useState([]);
+    const [translatedText,setTranslatedText] = useState("");
     const [comment_user_names,setComment_user_names] = useState([]);
     const [post_comment,setPostComment] = useState("");
     const [current_page,setCurrent_page] = useState(1);
@@ -43,11 +43,11 @@ function BoardSide(props){
     useEffect(()=>{
         dataclean();
         ShowComment();
-        console.log(current_page)
 
     },[current_page])
     //댓글 데이터 초기화
     const dataclean = () =>{
+        setTranslatedText(translatedText =>"")
         setComment_user_names(comment_user_names => [])
         setComment_texts(comment_texts => [])
     }
@@ -56,14 +56,13 @@ function BoardSide(props){
             content:post_comment,
             board_id:sideBoardId
         }).then(res=>{
-            console.log(res.data)
+            console.log(res);
         })
     }
     const commentHandle=(e)=>{
         setPostComment(post_comment => e.target.value);
     }
     const paginateHandle = (e) =>{
-        console.log(e)
         setCurrent_page(current_page => e.target.outerText);
         // 리렌더링 이전에 데이터 바뀌는거 찾아야함
      }
@@ -72,15 +71,29 @@ function BoardSide(props){
         axios.post("/api/show/comment/"+sideBoardId+"?page=" + current_page)
         .then(res=>{ 
             console.log("댓글 부르기")
-            console.log(res);
+            console.log(res.data);
             setLast_page(last_page => res.data.last_page)
             for(let i = 0 ; i<res.data.data.length;i++){
-                console.log(res.data.data[i].comment)
+                // console.log(res.data.data[i].comment)
                 setComment_user_names(comment_user_names => [...comment_user_names,res.data.data[i].user_name])
                 setComment_texts(comment_texts => [...comment_texts,res.data.data[i].comment])
             }
         })
         
+    }
+    const callPapago = (data) =>{
+        console.log(data[0]);
+        axios.post("/api/show/papago",{
+            text:data[0]
+        }).then(res=>{
+            if(res == "Error!!"){
+                setTranslatedText(translatedText=>"언어를 찾을 수 없습니다");
+            }
+            else{
+                setTranslatedText(translatedText=>res.data.message.result.translatedText);
+        
+            }
+        })
     }
     return (
         <Box className="justify-between flex" sx={{ display: 'flex' }}>
@@ -120,6 +133,8 @@ function BoardSide(props){
                 {/* 사이드바 데이터 있을경우*/}
                 {sideName != null &&
                 <div className='flex flex-col relative'>
+                    <Button onClick={()=>callPapago(sideText)}>번역하기</Button>
+            
                     <div className='w-full p-5'>
                     {/* 프사 & 이름 */}
                         <div className="flex">
@@ -135,7 +150,12 @@ function BoardSide(props){
                         <div className=' pt-4 mb-10 break-words'>
                             {sideText}
                         </div>
-                        {/* 페이지 네이션 */}
+                        {translatedText != "" &&
+                            <div className='bg-gray-200 p-4 mb-10 break-words'>
+                                {translatedText}
+                            </div>
+                        }
+                       {/* 페이지 네이션 */}
                         <div className='w-full flex justify-center bg-gray-200'>
                             <Pagination name="paginate" count={last_page} color="primary" onClick={paginateHandle} hidePrevButton hideNextButton />
                         </div>

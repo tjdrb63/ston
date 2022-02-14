@@ -32,9 +32,9 @@ export default (state = initialState ,action) => {
             return newState;
 
         case 'BOARD_CLICK':
-            newState.sideName =   [action.payload.sideName]
-            newState.sideText =   [action.payload.sideText]
-            newState.sideBoardId =[action.payload.sideBoardId]     
+            newState.sideName =   action.payload.sideName
+            newState.sideText =   action.payload.sideText
+            newState.sideBoardId =action.payload.sideBoardId   
             return newState;
 
         case 'SIDE_OPEN':

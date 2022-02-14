@@ -1,3 +1,5 @@
+
+// 더이상 사용하지않음
 import React,{Component, useRef, useState} from 'react';
 import Swal from 'sweetalert2'
 import axios from 'axios';
