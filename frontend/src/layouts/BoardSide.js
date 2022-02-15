@@ -15,15 +15,20 @@ function BoardSide(props){
     
     const pagi = React.createRef();
     const sideName = useSelector((state=>state.Reducers.sideName));
+    const user = useSelector((state=>state.Reducers.user))
     const sideText = useSelector((state=>state.Reducers.sideText));
     const sideBoardId = useSelector((state=>state.Reducers.sideBoardId));
     const [comment_texts,setComment_texts] = useState([]);
-    const [translatedText,setTranslatedText] = useState("");
     const [comment_user_names,setComment_user_names] = useState([]);
+    const [comment_times,setComment_times] = useState([]);
+    const [translatedText,setTranslatedText] = useState("");
     const [post_comment,setPostComment] = useState("");
     const [current_page,setCurrent_page] = useState(1);
     const [last_page,setLast_page] = useState(1);
     // const [open,setOpen] = useState(false);
+    const commentLoading = 0;
+    const [paginatePage,setPaginatePage]= useState(1);
+    
     const isOpen = useSelector((state=>state.Reducers.isOpen))
     const dispatch = useDispatch()
 
@@ -43,26 +48,31 @@ function BoardSide(props){
     useEffect(()=>{
         dataclean();
         ShowComment();
-
     },[current_page])
     //댓글 데이터 초기화
     const dataclean = () =>{
         setTranslatedText(translatedText =>"")
         setComment_user_names(comment_user_names => [])
         setComment_texts(comment_texts => [])
+        setComment_times(comment_times => [])
+        setPaginatePage(paginatePage => 1); 
     }
     const PostComment = () =>{
+           console.log(sideBoardId)
         axios.post('/api/post/comment',{
             content:post_comment,
-            board_id:sideBoardId
+            board_id:sideBoardId[0],
+            user_id:user.id
+            
         }).then(res=>{
-            console.log(res);
+            console.log("댓글 등록완료");
         })
     }
     const commentHandle=(e)=>{
         setPostComment(post_comment => e.target.value);
     }
     const paginateHandle = (e) =>{
+        console.log(e)
         setCurrent_page(current_page => e.target.outerText);
         // 리렌더링 이전에 데이터 바뀌는거 찾아야함
      }
@@ -70,13 +80,20 @@ function BoardSide(props){
     const ShowComment =() =>{
         axios.post("/api/show/comment/"+sideBoardId+"?page=" + current_page)
         .then(res=>{ 
+            setPaginatePage(paginatePage=>res.data.current_page)
             console.log("댓글 부르기")
             console.log(res.data);
-            setLast_page(last_page => res.data.last_page)
-            for(let i = 0 ; i<res.data.data.length;i++){
-                // console.log(res.data.data[i].comment)
-                setComment_user_names(comment_user_names => [...comment_user_names,res.data.data[i].user_name])
-                setComment_texts(comment_texts => [...comment_texts,res.data.data[i].comment])
+            if(res.data.data.length === 0){
+                console.log("값없음")
+                setComment_user_names(comment_user_names => ["No Data"])
+            }
+            else{
+                setLast_page(last_page => res.data.last_page)
+                for(let i = 0 ; i<res.data.data.length;i++){
+                    setComment_user_names(comment_user_names => [...comment_user_names, res.data.data[i].name])  
+                    setComment_texts(comment_texts => [...comment_texts,res.data.data[i].comment])
+                    setComment_times(comment_times =>[...comment_times,res.data.data[i].updated_at])
+                }
             }
         })
         
@@ -91,7 +108,6 @@ function BoardSide(props){
             }
             else{
                 setTranslatedText(translatedText=>res.data.message.result.translatedText);
-        
             }
         })
     }
@@ -117,19 +133,8 @@ function BoardSide(props){
                 </IconButton>
 
                 {/* 사이드바 데이터 없을경우 */}
-                {
-                    sideName == null &&
-                    <div className='w-full p-3'>
-                        <div className='flex mb-2'>
-                            <Skeleton variant="circular" width={48} height={48} />
-                            <Skeleton className='w-24 ml-2' variant="text"/>
-                        </div>
-                        <Skeleton variant="rectangular" width={270} height={118} />
-                        <div className="ml-10 font-bold text-lg mt-20 text-violet-600">
-                            댓글버튼 눌러보세요
-                        </div>
-                    </div>
-                }
+                
+
                 {/* 사이드바 데이터 있을경우*/}
                 {sideName != null &&
                 <div className='flex flex-col relative'>
@@ -156,31 +161,53 @@ function BoardSide(props){
                             </div>
                         }
                        {/* 페이지 네이션 */}
+                       {paginatePage}
                         <div className='w-full flex justify-center bg-gray-200'>
-                            <Pagination name="paginate" count={last_page} color="primary" onClick={paginateHandle} hidePrevButton hideNextButton />
+                            <Pagination name="paginate" count={last_page} color="primary" onChange={paginateHandle} page={paginatePage} hidePrevButton hideNextButton />
                         </div>
                         {/* 댓글 구간 */}   
-                        <div className='mb-24 '>
-                            {comment_user_names.map((user_name,idx)=>{
-                                return(
-                                    <div className='mt-2 mb-4' key={user_name}>
-                                        <div className="flex">
-                                            <Avatar className='mr-3'>d</Avatar> 
-                                            <div>
-                                                <h3 className="text-md font-semibold ">{user_name}</h3>
-                                                <p className="text-xs text-gray-500">시간표시할것</p>
+                        {/* 댓글 데이터 로딩중 */}
+                        {comment_user_names.length == 0 &&
+                            <div>
+                                <div className='w-full p-3'>
+                                    <div className='flex mb-2'>
+                                        <Skeleton variant="circular" width={48} height={48} />
+                                        <Skeleton className='w-24 ml-2' variant="text"/>
+                                    </div>
+                                    <Skeleton variant="rectangular" width={270} height={58} />
+                                </div>
+                            </div>
+                        }
+                        {/* 댓글 보여주기 */}
+                        {comment_user_names[0] == "No Data" &&  
+                            <div>
+                                <p>댓글이 없습니다.</p>
+                            </div>
+                        }
+                        {comment_user_names[0] != "No Data" &&   
+                            <div className='mb-24 '>
+                                {comment_user_names.map((user_name,idx)=>{
+                                    return(
+                                        <div className='mt-2 mb-4' key={idx}>
+                                            <div className="flex">
+                                                <Avatar className='mr-3'>d</Avatar> 
+                                                <div>
+                                                    <h3 className="text-md font-semibold ">{user_name}</h3>
+                                                    <p className="text-xs text-gray-500">{comment_times[idx]}</p>
+                                                </div>
+                                            </div>
+                                            <div className='break-words'>
+                                                {comment_texts[idx]}
                                             </div>
                                         </div>
-                                        <div className='break-words'>
-                                            {comment_texts[idx]}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>    
+                                    )
+                                })}
+                            </div>    
+                        }
+                        
+
                     </div>
                     {/* 댓글 달기 */}
-                    {post_comment}
                     <div className='flex fixed w-96 bottom-0 right-0 '>
                         <textarea name='post_comment' className='w-4/5 m-2 bg-gray-200' rows={4} onChange={commentHandle}
                         ></textarea>

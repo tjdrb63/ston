@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\FreeBoard;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,20 +29,24 @@ class BoardController extends Controller
         return $boards;
 }
     public function ShowComment($board_id){
-            $comments = DB::table("comments")->where("freeboard_id","=",$board_id)->paginate(5);
-            // $len= count($comments);
-            // for($i=0;$i<3;$i++){
-            //     $userName= DB::table('users')->where("id","=",$comments[$i]->user_id)->value("name");
-            //     $comments[$i] -> user_name = $userName;
-            // }
+            $comments = DB::table("comments")
+                ->where('freeboard_id','=',$board_id)
+                ->join('users','comments.user_id','=','users.id')
+                ->select('comments.*','users.name')
+                ->latest()
+                ->paginate(5);
             return $comments;
+
+    }
+
+    public function ShowUserName($user_id){
+
     }
     public function PostComment(Request $request){
         $comments = new Comment();
         $comments -> freeboard_id = $request->board_id;
         $comments -> comment = $request->content;
-        // user_id 수정할것
-        $comments -> user_id = 6;
+        $comments -> user_id = $request->user_id;
         $comments -> save();
 
     }

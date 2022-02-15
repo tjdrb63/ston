@@ -18,7 +18,6 @@ function BoardCopy(props)
     const [user_name,setUserName] = useState(null);
     const [content_text,setContentText] = useState(null);
     const [board_id,setBoardId] = useState(null);    
-    
     const dispatch = useDispatch();
 
      // 라라벨 에서 데이터 받아 state 저장
@@ -62,10 +61,9 @@ function BoardCopy(props)
     const isOpen = useSelector((state)=>state.Reducers.isOpen);
 
         return(     
-                <div className={"w-full mt-16 m-auto flex " +(isOpen ? 'mr-96' : '')}> 
+                <div className={"w-full mt-16 m-auto flex " +(isOpen ? 'mr-96' : '')}>
                     <Sidebar></Sidebar>
-                    <Navbar></Navbar>
-                    
+                    <Navbar></Navbar>   
                     {/* <BoardWriteModal></BoardWriteModal> */}
                     {/* main */}  
                     
@@ -86,7 +84,7 @@ function BoardCopy(props)
                             >
                                 {user_names.map((data,idx) =>{
                                     return(   
-                                        <div key={data}>
+                                        <div key={idx}>
                                             <BoardCard name={data} board_id={board_ids[idx]} text={content_texts[idx]}/>
                                         </div>
                                     )
