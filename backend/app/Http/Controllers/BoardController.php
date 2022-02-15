@@ -50,6 +50,11 @@ class BoardController extends Controller
         $comments -> save();
 
     }
+    public function UpdateComment(Request $request){
+        $comment = Comment::find($request->comment_id);
+        $comment -> comment = $request -> updateText;
+        $comment -> save();
+    }
     public function ShowPapago(Request $request){
         $text = $request-> text;
 
