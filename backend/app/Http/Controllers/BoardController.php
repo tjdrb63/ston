@@ -55,13 +55,18 @@ class BoardController extends Controller
         $comment -> comment = $request -> updateText;
         $comment -> save();
     }
+    public function DeleteComment($comment_id){
+        $comment = Comment::find($comment_id);
+        $comment-> delete();
+    }
+
     public function ShowPapago(Request $request){
         $text = $request-> text;
 
         $client_id = "W67VxGiecQuxoWQaqZ02"; // 네이버 개발자센터에서 발급받은 CLIENT ID
         $client_secret = "BxA1eiUXuT";// 나중에 가릴것 ㅋㅋ
         $encText = urlencode($text);
-        $postvars = "source=ko&target=en&text=".$encText;
+        $postvars = "source=ko&target=ja&text=".$encText;
         $url = "https://openapi.naver.com/v1/papago/n2mt";
         $is_post = true;
         $ch = curl_init();

@@ -10,6 +10,7 @@ import {Provider, useSelector, useDispatch, connect} from 'react-redux';
 import { BoardUpdate } from '../store/actions';
 import Sidebar from '../layouts/Sidebar';
 import Navbar from '../layouts/Navbar';
+import { Avatar, Card } from '@mui/material';
 
 
 
@@ -61,15 +62,17 @@ function BoardCopy(props)
     const isOpen = useSelector((state)=>state.Reducers.isOpen);
 
         return(     
-                <div className={"w-full mt-16 m-auto flex " +(isOpen ? 'mr-96' : '')}>
-                    <Sidebar></Sidebar>
-                    <Navbar></Navbar>   
+                <div className={"mt-16 flex w-full " +(isOpen ? 'mr-96' : '')}>
+                    <div>
+                        <Navbar></Navbar>
+                        <Sidebar></Sidebar> 
+                    </div>
                     {/* <BoardWriteModal></BoardWriteModal> */}
                     {/* main */}  
                     
-                    <div className='w-full bg-gray-200 relative'>
-                    <BoardSide></BoardSide>
-                        <div className='w-full bg-gray-200 relative'>
+                    <div className={'w-full bg-gray-200 relative '+(isOpen ? "" : "mr-96")} >
+                        <BoardSide></BoardSide>
+                        <div className='bg-gray-200 relative'>
                             <BoardWriteModal></BoardWriteModal>
                             <InfiniteScroll
                                 dataLength={user_names.length} //This is important field to render the next data
@@ -90,8 +93,44 @@ function BoardCopy(props)
                                     )
                                 })}
                             </InfiniteScroll>
-                        </div>     
-                    </div>   
+                        </div>   
+                    </div>
+                    {!isOpen &&
+                        <div className={'w-96 h-screen bg-white fixed right-0 '}>
+                            <p className='text-center'>
+                                현재 온라인 상태    
+                            </p>
+                        <Card className='m-2'>
+                            <div className='flex px-5 py-2 bg-gray-100'>
+                                <p className='mt-2 text-sm text-green-500 mr-10'>접속 중 </p>
+                                <Avatar>J</Avatar>
+                                <p className='mt-1 ml-2 text-lg'>장성규</p>
+                            </div>
+                        </Card>
+                        <Card className='m-2'>
+                            <div className='flex px-5 py-2  bg-gray-100'>
+                                <p className='mt-2 text-sm text-green-500 mr-10'>접속 중 </p>
+                                <Avatar>P</Avatar>
+                                <p className='mt-1 ml-2 text-lg'>박주형</p>
+                            </div>
+                        </Card>
+                        <Card className='m-2'>
+                            <div className='flex px-5 py-2  bg-gray-100'>
+                                <p className='mt-2 text-sm text-yellow-400 mr-10'>자리 비움 </p>
+                                <Avatar>K</Avatar>
+                                <p className='mt-1 ml-2 text-lg'>김리건</p>
+                            </div>
+                        </Card>
+                        <Card className='m-2'>
+                            <div className='flex px-5 py-2  bg-gray-100'>
+                                <p className='mt-2 text-sm text-red-500 mr-10'>바쁨</p>
+                                <Avatar>N</Avatar>
+                                <p className='mt-1 ml-2 text-lg'>누구임</p>
+                            </div>
+                        </Card>
+                        </div>
+                    }
+                        
                 </div>
         )
     

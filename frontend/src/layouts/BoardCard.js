@@ -26,7 +26,7 @@ function BoardCard(props){
     }
 
     return (  
-        <div className ="w-full px-2">
+        <div className ="w-full mx-auto max-w-2xl px-3">
             <div>
                 <div className="bg-white w-full rounded-md shadow-md mt-2">
                     <div className="w-full h-16 ml-2 flex items-center flex justify-between ">
@@ -38,12 +38,17 @@ function BoardCard(props){
                                     <h3 className="text-md font-semibold pt-2">{props.name}</h3>
                                 </div>
                             </div>
-                            <svg className="w-10 mt-1.5" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#b0b0b0" strokeWidth="2" strokeLinecap="square" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
                         </div>
                     </div>
-                    <div className='w-full'>
-                        <div className='mt-10 mb-5 w-fit mx-auto '>
+                    <div className='w-full '>
+                        <div className='mt-10 mb-5 mx-auto'>
                             <img className="mx-auto" src="http://placehold.it/600x600" />
+                            <div className='w-full break-words p-6'>
+                                게시글 내용게시글 내용게시글 내용게시글 내용게시글 내용게시글 내용게시글 내용게시글 내용
+                            </div>
+                            <div className=' px-6'>
+                                좋아요 : 19
+                            </div>
                             <div className='grid grid-cols-3 w-full mt-5 pb-6'>     
                                 <Button color="error"><SvgIcon className='mx-auto' component={FavoriteBorderIcon} fontSize="large"></SvgIcon></Button>
                                 <Button onClick={BoardToSideData} ><SvgIcon className='mx-auto' component={ChatIcon} fontSize="large"></SvgIcon></Button>

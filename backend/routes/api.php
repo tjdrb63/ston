@@ -40,3 +40,4 @@ Route::post('/post/comment',[BoardController::class,"PostComment"]);
 Route::post('/show/papago',[BoardController::class,"ShowPapago"]);
 Route::post('/show/username/{user_id}',[BoardController::class,"ShowUserName"]);
 Route::post('/update/comment',[BoardController::class,"UpdateComment"]);
+Route::post('/delete/comment/{comment_id}',[BoardController::class,"DeleteComment"]);
